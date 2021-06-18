@@ -1,0 +1,23 @@
+{
+  "name": "vue-jello",
+  "version": "0.0.1",
+  "description": "A vue component that makes use of jello.js to load models and collections from a Laravel-based api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "laravel",
+    "vue",
+    "eloquent",
+    "orm",
+    "collections",
+    "api",
+    "list"
+  ],
+  "author": "Clayton Salazar",
+  "license": "ISC",
+  "dependencies": {
+    "jello.js": "0.0.2"
+  }
+}
