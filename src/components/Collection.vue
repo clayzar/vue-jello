@@ -1,5 +1,5 @@
 <script>
-	import { Collection } from 'jello'
+	import { Collection } from 'jello.js'
 
 	export default {
 		props: {
@@ -13,7 +13,10 @@
 			},
 			params: {
 				required: false,
-				type: Object
+				type: Object,
+				default() {
+					return {}
+				}
 			},
 			paginate: {
 				required: false,
@@ -45,11 +48,35 @@
 			}
 		},
 		data() {
+			const queryString = new URLSearchParams(this.params).toString()
 			return {
 				collection: this.makeCollection(),
-				initialPath: this.path,
-				initialParams: {...this.params}
+				initialUrl: `${this.path}?${queryString}`
 			}
+		},
+		computed: {
+			url() { // only used for determining when to use the items initially supplied
+				const queryString = new URLSearchParams(this.params).toString()
+				return `${this.path}?${queryString}`
+			},
+			items() {
+				return this.collection.items
+			},
+			meta() {
+				return this.collection.meta
+			},
+			links() {
+				return this.collection.links
+			},
+			additional() {
+				return this.collection.additional
+			},
+			loading() {
+				return this.collection.loading
+			},
+			loaded() {
+				return this.collection.loaded
+			},
 		},
 		watch: {
 			path(to) {
@@ -73,13 +100,11 @@
 			}
 		},
 		created() {
-			console.log('Collection.vue created', this.autoload, this.collection.loading, this.collection.loaded);
 			if(this.autoload && !this.collection.loading && !this.collection.loaded) {
 				this.load()
 			}
 		},
 		activated() {
-			console.log('Collection.vue activated');
 			if(this.autoload && !this.collection.loading && !this.collection.loaded) {
 				this.load()
 			}
@@ -88,11 +113,19 @@
 			reset() {
 				this.collection = this.makeCollection()
 			},
-			load(options) {
-				console.log('Collection.vue Load');
+			load(options = {}) {
+				options.config = {
+					cache: {
+						ignoreCache: !this.cache,
+						...options.cache
+					},
+					...options.config
+				}
+
 				return this.collection.load(options)
-				.then(items => {
-					console.log('loaded:', items);
+				.then(data => {
+					this.$emit('loaded', data)
+					return data
 				})
 			},
 			makeCollection() {
@@ -104,7 +137,8 @@
 					paginate: this.paginate
 				})
 
-				if(this.path == this.initialPath && this.params == this.initialParams && this.initialItems != undefined) {
+				const isSameAsInitialState = this.url == this.initialUrl
+				if(this.initialItems && (!this.collection || isSameAsInitialState)) {
 					collection.items = this.initialItems
 					collection.loaded = true
 				}
@@ -113,15 +147,18 @@
 			}
 		},
 		render() {
-			const { items, meta, links, loading, loaded } = this.collection
-			return this.$scopedSlots.default({
+			const { items, meta, links, loading, loaded, additional } = this.collection
+			const slots = '$scopedSlots' in this ? this['$scopedSlots'] : this.$slots
+			return slots.default({
 				 items,
 				 meta,
 				 links,
 				 loading,
 				 loaded,
-				 next: this.paginate && meta.current_page < meta.last_page ? () => this.collection.next() : undefined,
-				 prev: this.paginate && meta.current_page > 1 ? () => this.collection.prev() : undefined,
+				 additional,
+				 next: this.paginate && this.collection.hasNext ? () => this.collection.next() : undefined,
+				 prev: this.paginate && this.collection.hasPrev ? () => this.collection.prev() : undefined,
+				 reload: this.load,
 			})
 		}
 	}
