@@ -1,6 +1,6 @@
 {
   "name": "vue-jello",
-  "version": "0.0.47",
+  "version": "0.1.0",
   "description": "A vue component that makes use of jello.js to load models and collections from a Laravel-based api",
   "main": "index.js",
   "scripts": {
