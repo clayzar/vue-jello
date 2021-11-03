@@ -1,6 +1,6 @@
 {
   "name": "vue-jello",
-  "version": "0.1.2",
+  "version": "0.1.8",
   "description": "A vue component that makes use of jello.js to load models and collections from a Laravel-based api",
   "main": "index.js",
   "scripts": {
@@ -18,6 +18,6 @@
   "author": "Clayton Salazar",
   "license": "ISC",
   "dependencies": {
-    "jello.js": "0.1.19"
+    "jello.js": "0.1.x"
   }
 }

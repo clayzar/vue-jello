@@ -85,6 +85,7 @@
 			params: {
 				deep: true,
 				handler(to) {
+					console.log('updated params!');
 					this.reset()
 				}
 			},
@@ -147,7 +148,7 @@
 			}
 		},
 		render() {
-			const { items, meta, links, loading, loaded, additional } = this.collection
+			const { items, meta, links, additional, hasNext, hasPrev, is: { loading, loaded, busy } } = this.collection
 			const slots = '$scopedSlots' in this ? this['$scopedSlots'] : this.$slots
 			return slots.default({
 				 items,
@@ -155,7 +156,10 @@
 				 links,
 				 loading,
 				 loaded,
+				 busy,
 				 additional,
+				 hasNext,
+				 hasPrev,
 				 next: this.paginate && this.collection.hasNext ? () => this.collection.next() : undefined,
 				 prev: this.paginate && this.collection.hasPrev ? () => this.collection.prev() : undefined,
 				 reload: this.load,
