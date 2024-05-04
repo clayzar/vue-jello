@@ -1,4 +1,4 @@
-import Collection from './components/Collection'
+import Collection from './components/Collection.vue'
 
 export default {
 	install(Vue, options = {}) {
